@@ -232,6 +232,17 @@ class CsvParser extends Transform {
           // non-escaped quote (quoting the cell)
         } else {
           this.state.quoted = !this.state.quoted
+          if (this.state.quoted) {
+            if (i + 1 < bufferLength) {
+              for (let j = i + 1; j < bufferLength; j++) {
+                // Check if you can find another quote before an escape or end
+                if (buffer[j] === cr) { continue } else if (buffer[j] === this.options.separator) {
+                  this.state.quoted = false
+                  break
+                } else { break }
+              }
+            }
+          }
         }
         continue
       }
